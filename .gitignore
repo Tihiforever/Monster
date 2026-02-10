@@ -1,0 +1,19 @@
+# IntelliJ
+.idea/
+*.iml
+
+# Gradle
+.gradle/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# libGDX
+android/build/
+android/.gradle/
+core/build/
+desktop/build/
+html/build/
+ios/build/
