@@ -19,7 +19,7 @@ public class MonsterGame extends ApplicationAdapter {
     SpriteBatch batch;
 
     final int TILE_SIZE = 40;
-    boolean supersight = true;
+    boolean gameOver = false;
     float monsterTimer = 0f;
 
     @Override
@@ -34,13 +34,26 @@ public class MonsterGame extends ApplicationAdapter {
 
     @Override
     public void render() {
-        handleInput();
 
-        monsterTimer += Gdx.graphics.getDeltaTime();
-        if (monsterTimer > 0.5f) {
-            monster.moveTowardAStar(player,grid);
-            monsterTimer = 0f;
+
+        if (!gameOver) {
+            if (player.health <= 0
+                || (player.x == monster.x && player.y == monster.y)
+                || (player.gold == 3 && player.x == 19 && player.y == 19)) {
+                gameOver = true;
+            }
         }
+
+        if (!gameOver) {
+            handleInput();
+
+            monsterTimer += Gdx.graphics.getDeltaTime();
+            if (monsterTimer > 0.5f) {
+                monster.moveTowardAStar(player, grid);
+                monsterTimer = 0f;
+            }
+        }
+
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         shape.begin(ShapeRenderer.ShapeType.Filled);
@@ -93,20 +106,8 @@ public class MonsterGame extends ApplicationAdapter {
         }
 
 
-        //check win
-        if(player.checkwin(grid,shape)){
-            shape.setColor(Color.BLACK);
-            shape.rect(0,0,880,800);
-
-        }
-
         shape.end();
 
-        // game over
-        if (player.health <= 0 ||
-            (player.x == monster.x && player.y == monster.y) || (player.gold == 3 && player.x == 19 && player.y == 19)) {
-            Gdx.app.exit();
-        }
 
         //error and stats log
         batch.begin();
@@ -114,7 +115,28 @@ public class MonsterGame extends ApplicationAdapter {
         font.draw(batch, "Gold: "+player.gold+"/3", 20,800);
         font.draw(batch, "Explodes: "+player.explode+"   Supersights:  "+player.supersight, 150,800);
         batch.end();
-        System.out.println(player.gold + " " + player.health + " " + player.explode + " " + player.supersight);
+
+
+
+        // game over
+        if (gameOver) {
+            Gdx.gl.glClearColor(0, 0, 0, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+            batch.begin();
+            font.getData().setScale(6f);
+            font.draw(batch, "GAME OVER", 160, 550);
+            font.getData().setScale(2f);
+            font.draw(batch, "Press R to Restart", 30, 60);
+            batch.end();
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+                create(); // soft restart
+                gameOver = false;
+            }
+        }
+
+
     }
 
     private void handleInput() {
