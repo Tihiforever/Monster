@@ -20,6 +20,7 @@ public class MonsterGame extends ApplicationAdapter {
 
     final int TILE_SIZE = 40;
     boolean gameOver = false;
+    boolean win = false;
     float monsterTimer = 0f;
 
     @Override
@@ -37,9 +38,9 @@ public class MonsterGame extends ApplicationAdapter {
 
 
         if (!gameOver) {
-            if (player.health <= 0
-                || (player.x == monster.x && player.y == monster.y)
-                || (player.gold == 3 && player.x == 19 && player.y == 19)) {
+            if (player.health <= 0 ||
+                (player.x == monster.x && player.y == monster.y) ||
+                (player.x == 19 && player.y == 19 && player.gold == 3)){
                 gameOver = true;
             }
         }
@@ -125,7 +126,11 @@ public class MonsterGame extends ApplicationAdapter {
 
             batch.begin();
             font.getData().setScale(6f);
-            font.draw(batch, "GAME OVER", 160, 550);
+            if(player.x == 19 && player.y == 19 && player.gold == 3){
+                font.draw(batch, "YOU WIN", 200, 550);
+            } else {
+                font.draw(batch, "GAME OVER", 160, 550);
+            }
             font.getData().setScale(2f);
             font.draw(batch, "Press R to Restart", 30, 60);
             batch.end();
